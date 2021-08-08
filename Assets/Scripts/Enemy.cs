@@ -7,37 +7,28 @@ using Vector3 = UnityEngine.Vector3;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]
-    private Transform path;
+    [SerializeField] private Transform path;
     [SerializeField] private float speed = 5f;
-    [SerializeField] [Tooltip("angle degrees per second")] private float turnSpeed = 90;
+    [SerializeField] [Tooltip("angle degrees per second")] private float turnSpeed = 180;
     [SerializeField] [Tooltip("1 is forward, -1 is backward")] private int moveDirection = 1;
     [SerializeField] private float waitTime = 1f;
 
-
+    [SerializeField] private Light spotlight;
+    [SerializeField] private float viewDistance;
+    [SerializeField] private LayerMask obstructionLayer;
+    private float viewAngle;
+    [SerializeField] private Transform player;
+    
+    private Color defaultSpotlightColour;
+    
     /// <summary>
     /// draw gizmos on the editor 
     /// </summary>
     private void OnDrawGizmos()
     {
-
-        if (null == path)
-        {
-            Debug.LogError("need path, pls drag path to enemy script field");
-            return;
-        }
-        
-        Vector3 startpos = path.GetChild(0).position;
-        Vector3 prevpos = startpos;
-
-        foreach (Transform waypoint in path)
-        {
-            Gizmos.DrawLine(prevpos, waypoint.position);
-            prevpos = waypoint.position;
-        }
-        //connect last and first to loop the path
-        //end of foreach above already gives path.GetChild(path.childCount-1).position
-        Gizmos.DrawLine(prevpos, startpos);
+        //spotlight colour
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * viewDistance);
     }
 
     /// <summary>
@@ -61,8 +52,15 @@ public class Enemy : MonoBehaviour
                 nextIndex = (nextIndex + moveDirection) % waypoints.Length;
                 next = waypoints[nextIndex];
                 //yield return new WaitForSeconds(waitTime);
-                //yield return StartCoroutine(TurnToFace(next));
-                transform.LookAt(next);
+
+                if (waitTime == 0)
+                {
+                    transform.LookAt(next);
+                }
+                else
+                {
+                    yield return StartCoroutine(TurnToFace(next));
+                }
             }
             yield return null;
         }
@@ -70,6 +68,10 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //keep original spotlight colour before any detection
+        defaultSpotlightColour = spotlight.color;
+        viewAngle = spotlight.spotAngle;
+        
         //intialise waypoints array and run start the coroutine 
         Vector3[] waypoints = new Vector3[path.childCount];
         for (int i = 0; i < waypoints.Length; i++)
@@ -103,6 +105,19 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //if player is spotted, the spotlight becomes red, else, normal colour
+        spotlight.color = canSeePlayer() ? Color.red : defaultSpotlightColour;
+    }
+
+    bool canSeePlayer()
+    {
+        if (Vector3.Distance(this.transform.position, player.position) < viewDistance)
+        {
+            Vector3 directionToPlayer = (player.position - this.transform.position).normalized;
+            float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+            if (!(angleBetweenGuardAndPlayer < viewAngle / 2f)) return false;
+            if (!Physics.Linecast(transform.position, player.position, obstructionLayer)) return true;
+        }
+        return false;
     }
 }
