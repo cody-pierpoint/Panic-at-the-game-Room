@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Codys_Movement
 {
     [RequireComponent(typeof(CharacterController))]
+    
     public class Movement : MonoBehaviour
     {
         [SerializeField] private float speed;
@@ -15,6 +16,13 @@ namespace Codys_Movement
         private float turnSmoothVelocity;
         public Transform cam;
         public float jumpSpeed;
+        
+        /// <summary>
+        /// reference to the Game Manager
+        /// </summary>
+        [SerializeField]
+        private GameManager _gameManager;
+        
         // Start is called before the first frame update
         void Start()
         {
@@ -23,7 +31,7 @@ namespace Codys_Movement
         // Update is called once per frame
         void Update()
         {
-            Moveing();
+            if (!_gameManager.isMenu) Moveing();
             /*moveDirection.y -= gravity * Time.deltaTime;
             if(Input.GetKeyDown(KeyCode.Space))
             {
