@@ -36,8 +36,8 @@ namespace Codys_Movement
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
             moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
-                //moveDirection = transform.TransformDirection(new Vector3(Input.GetAxisRaw()("Horizontal"), 0, Input.GetAxisRaw("Vertical")));
-                moveDirection *= speed;
+            //moveDirection = transform.TransformDirection(new Vector3(Input.GetAxisRaw()("Horizontal"), 0, Input.GetAxisRaw("Vertical")));
+            moveDirection *= speed;
                 
 
                 
@@ -50,7 +50,6 @@ namespace Codys_Movement
                 
                 controller.Move(moveDirection * speed * Time.deltaTime);
             }
-            
         }
     }
 }
