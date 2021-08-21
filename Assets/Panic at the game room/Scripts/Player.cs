@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class Player: MonoBehaviour
 {
+    [SerializeField]
+    private GameManager _gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-       Debug.Log("player start"); 
+       Debug.Log("player start");
     }
 
     // Update is called once per frame
@@ -27,14 +29,16 @@ public class Player: MonoBehaviour
             Debug.Log("collision item");
             //deactivate to remove from scene but don't destroy
             other.gameObject.SetActive(false);
+            _gameManager.AddScore();
         }
         
         //collision with enemy
         if (other.gameObject.CompareTag("Enemy"))
         {
             //game over, deactivate self
-            gameObject.SetActive(false);
+            _gameManager.ShowMenu("Game Over", true);
         }
         
     }
+    
 }
