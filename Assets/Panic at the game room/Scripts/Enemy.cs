@@ -21,8 +21,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float spottedThresholdTime = 2f;
     [SerializeField] private GameManager _gameManager;
     private Color defaultSpotlightColour;
-    private bool isPlayerSpotted;
-    private bool isCountdown = false;
     
     /// <summary>
     /// draw gizmos on the editor 
@@ -124,19 +122,19 @@ public class Enemy : MonoBehaviour
             float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, directionToPlayer);
             if (!(angleBetweenGuardAndPlayer < viewAngle / 2f))
             {
-                setSpotted(false, false);
+                _gameManager.setSpotted(false, false);
                 CancelInvoke();
                 return false;
             }
             if (!Physics.Linecast(transform.position, player.position, obstructionLayer))
             {
-                setSpotted(true, false);
+                _gameManager.setSpotted(true, false);
                 //start the timer
                 SetGameOverIfCaught();
                 return true;
             }
         }
-        setSpotted(false, false);
+        _gameManager.setSpotted(false, false);
         CancelInvoke();
         return false;
     }
@@ -145,18 +143,14 @@ public class Enemy : MonoBehaviour
     {
         // Debug.Log($"countdown {isCountdown}, spotted {isPlayerSpotted}");
         //don't restart wait if already counting down
-        if (!isCountdown)
+        if (!_gameManager.isCountdown)
         {
             Invoke(nameof(showGameOverSpotted), spottedThresholdTime);
-            isCountdown = true;
+            _gameManager.isCountdown = true;
         }
     }
     
-    private void setSpotted(bool spotted, bool countdown)
-    {
-        isPlayerSpotted = spotted;
-        isCountdown = countdown;
-    }
+ 
 
     private void showGameOverSpotted()
     {

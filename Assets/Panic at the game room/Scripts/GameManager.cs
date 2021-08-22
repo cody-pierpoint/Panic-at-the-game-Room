@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool isMenu;
     
+    public bool isPlayerSpotted = false;
+    public bool isCountdown = false;
+    
     #endregion
 
     // Start is called before the first frame update
@@ -78,6 +81,7 @@ public class GameManager : MonoBehaviour
         {
             _gameOverUI.SetActive(false);
             _playerGameObject.SetActive(true);
+            isMenu = false;
         }
     }
 
@@ -105,6 +109,7 @@ public class GameManager : MonoBehaviour
     {
         ResetScore();
         ResetItems();
+        setSpotted(false, false);
         ShowMenu("", false);
     }
 
@@ -126,5 +131,11 @@ public class GameManager : MonoBehaviour
         {
             c.SetActive(true);
         }
+    }
+    
+    public void setSpotted(bool spotted, bool countdown)
+    {
+        isPlayerSpotted = spotted;
+        isCountdown = countdown;
     }
 }
