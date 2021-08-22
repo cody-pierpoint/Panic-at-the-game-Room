@@ -18,8 +18,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] private LayerMask obstructionLayer;
     private float viewAngle;
     [SerializeField] private Transform player;
-    
+    [SerializeField] private float spottedThresholdTime = 2f;
+    [SerializeField] private GameManager _gameManager;
     private Color defaultSpotlightColour;
+    private bool isPlayerSpotted;
+    private bool isCountdown = false;
     
     /// <summary>
     /// draw gizmos on the editor 
@@ -109,15 +112,54 @@ public class Enemy : MonoBehaviour
         spotlight.color = canSeePlayer() ? Color.red : defaultSpotlightColour;
     }
 
+    /// <summary>
+    /// can it see the player? checks if player position is within the view angle and distance
+    /// </summary>
+    /// <returns></returns>
     bool canSeePlayer()
     {
         if (Vector3.Distance(this.transform.position, player.position) < viewDistance)
         {
             Vector3 directionToPlayer = (player.position - this.transform.position).normalized;
             float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-            if (!(angleBetweenGuardAndPlayer < viewAngle / 2f)) return false;
-            if (!Physics.Linecast(transform.position, player.position, obstructionLayer)) return true;
+            if (!(angleBetweenGuardAndPlayer < viewAngle / 2f))
+            {
+                setSpotted(false, false);
+                CancelInvoke();
+                return false;
+            }
+            if (!Physics.Linecast(transform.position, player.position, obstructionLayer))
+            {
+                setSpotted(true, false);
+                //start the timer
+                SetGameOverIfCaught();
+                return true;
+            }
         }
+        setSpotted(false, false);
+        CancelInvoke();
         return false;
+    }
+
+    private void SetGameOverIfCaught()
+    {
+        // Debug.Log($"countdown {isCountdown}, spotted {isPlayerSpotted}");
+        //don't restart wait if already counting down
+        if (!isCountdown)
+        {
+            Invoke(nameof(showGameOverSpotted), spottedThresholdTime);
+            isCountdown = true;
+        }
+    }
+    
+    private void setSpotted(bool spotted, bool countdown)
+    {
+        isPlayerSpotted = spotted;
+        isCountdown = countdown;
+    }
+
+    private void showGameOverSpotted()
+    {
+        _gameManager.ShowMenu("Game Over\nYou are spotted", true);
     }
 }

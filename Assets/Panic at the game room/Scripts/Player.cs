@@ -11,7 +11,7 @@ public class Player: MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       Debug.Log("player start");
+        
     }
 
     // Update is called once per frame
@@ -41,7 +41,7 @@ public class Player: MonoBehaviour
         //collision with exit point
         if (other.gameObject.CompareTag("Exit Point"))
         {
-            Debug.Log("collision exit");
+            //Debug.Log("collision exit");
             //game clear
             _gameManager.ShowMenu($"RAD\nYou escaped with {_gameManager.score} crumbs", true);
         }
