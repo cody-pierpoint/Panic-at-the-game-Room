@@ -36,11 +36,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Text _scoreText;
-    
+
     /// <summary>
     /// score of the game
     /// </summary>
-    private int _score;
+    public int score { get; private set; }
     /// <summary>
     /// is it menu displayed now?
     /// </summary>
@@ -77,6 +77,7 @@ public class GameManager : MonoBehaviour
         else
         {
             _gameOverUI.SetActive(false);
+            _playerGameObject.SetActive(true);
         }
     }
 
@@ -85,7 +86,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void AddScore()
     {
-        _score++;
+        score++;
         UpdateHUD();
     }
 
@@ -94,7 +95,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void UpdateHUD()
     {
-        _scoreText.text = _score.ToString();
+        _scoreText.text = score.ToString();
     }
 
     /// <summary>
@@ -104,6 +105,7 @@ public class GameManager : MonoBehaviour
     {
         ResetScore();
         ResetItems();
+        ShowMenu("", false);
     }
 
     /// <summary>
@@ -111,7 +113,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ResetScore()
     {
-        _score = 0;
+        score = 0;
         UpdateHUD();
     }
 

@@ -22,11 +22,10 @@ public class Player: MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("collision enter");
+        //Debug.Log("collision enter");
         //collision with crumbs
         if (other.gameObject.CompareTag("Item"))
         {
-            Debug.Log("collision item");
             //deactivate to remove from scene but don't destroy
             other.gameObject.SetActive(false);
             _gameManager.AddScore();
@@ -39,6 +38,14 @@ public class Player: MonoBehaviour
             _gameManager.ShowMenu("Game Over", true);
         }
         
+        //collision with exit point
+        if (other.gameObject.CompareTag("Exit Point"))
+        {
+            Debug.Log("collision exit");
+            //game clear
+            _gameManager.ShowMenu($"RAD\nYou escaped with {_gameManager.score} crumbs", true);
+        }
+
     }
     
 }
