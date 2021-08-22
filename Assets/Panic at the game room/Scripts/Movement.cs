@@ -15,7 +15,7 @@ namespace Codys_Movement
         public float turnSmoothTime = 0.1f;
         private float turnSmoothVelocity;
         public Transform cam;
-        public float jumpSpeed;
+        public float jumpSpeed = 50f;
         
         /// <summary>
         /// reference to the Game Manager
@@ -32,12 +32,13 @@ namespace Codys_Movement
         void Update()
         {
             if (!_gameManager.isMenu) Moveing();
-            /*moveDirection.y -= gravity * Time.deltaTime;
             if(Input.GetKeyDown(KeyCode.Space))
             {
-                
                 moveDirection.y = jumpSpeed;
-            }*/
+                controller.Move(moveDirection * Time.deltaTime);
+            }
+            moveDirection.y -= gravity * Time.deltaTime;
+            controller.Move(moveDirection * Time.deltaTime);
         }
         private void Moveing()
         {

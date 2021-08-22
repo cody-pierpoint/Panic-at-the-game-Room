@@ -20,7 +20,7 @@ public class Player: MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
         //Debug.Log("collision enter");
         //collision with crumbs
